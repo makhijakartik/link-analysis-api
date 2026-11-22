@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import logging
 
+from pathlib import Path
+
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.schemas import ErrorResponse, LinkAnalysisRequest, LinkAnalysisResponse
 from app.services.analysis_service import run_analysis
@@ -23,9 +26,18 @@ app = FastAPI(
 )
 
 
+_STATIC_DIR = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
+
+
 @app.get("/health")
 async def health() -> dict:
     return {"status": "ok"}
+
+
+@app.get("/")
+async def frontend() -> FileResponse:
+    return FileResponse(_STATIC_DIR / "index.html")
 
 
 @app.post(

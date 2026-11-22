@@ -10,6 +10,9 @@ Built for the Dxora Technologies Python practical test.
 
 - `POST /link-analysis` — single endpoint, takes `{"url": "..."}`, returns the
   five required analysis sections as structured JSON.
+- Minimal static frontend at `GET /` (vanilla HTML/CSS/JS, served by FastAPI)
+  for manually testing the endpoint without curl/Swagger — enter a URL, see
+  all five sections rendered.
 - Real content extraction (title, meta description, headings, nav labels,
   body text) via `httpx` + `BeautifulSoup`, with boilerplate/script/style
   stripped before anything reaches the LLM.
@@ -30,7 +33,7 @@ Built for the Dxora Technologies Python practical test.
 
 ```
 app/
-  main.py                      # FastAPI app, /link-analysis route
+  main.py                      # FastAPI app, /link-analysis route, static frontend
   config.py                    # env-driven settings
   schemas.py                   # Pydantic request/response models
   services/
@@ -40,6 +43,8 @@ app/
     competitor_service.py      # competitor-section post-processing
   utils/
     validators.py              # URL + SSRF validation
+  static/
+    index.html, style.css, script.js   # minimal frontend for manual testing
 tests/
   test_link_analysis.py        # mocked happy path + error-path tests
 .env.example
@@ -64,6 +69,7 @@ Run the server:
 uvicorn app.main:app --host 0.0.0.0 --port 4000
 ```
 
+Frontend (manual testing UI): http://localhost:4000/
 API docs: http://localhost:4000/docs
 
 Run tests (LLM and HTTP calls are mocked, no API key required):
